@@ -167,6 +167,14 @@ class Collaboration(models.Model):
 
 
 class DailyPlan(models.Model):
+
+    def clean(self):
+        """Validate the daily plan date."""
+
+        if self.day_number < 1:
+            raise ValidationError(
+               "Day number must be at least 1."
+        )
     """Day-by-day plan within an itinerary."""
 
     itinerary = models.ForeignKey(
