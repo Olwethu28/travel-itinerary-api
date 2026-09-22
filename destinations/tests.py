@@ -19,8 +19,10 @@ class DestinationSerializerTests(TestCase):
             climate="MEDITERRANEAN",
             latitude=-33.9249,
             longitude=18.4241,
+            avg_daily_cost=1500,
         )
-
+        
+        
     def test_destination_list_serializer(self):
         serializer = DestinationListSerializer(self.destination)
 
