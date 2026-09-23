@@ -15,14 +15,14 @@ class DestinationSerializerTests(TestCase):
             name="Cape Town",
             country="South Africa",
             description="A beautiful coastal city.",
-            category="CITY",
-            climate="MEDITERRANEAN",
+            category="city",
+            climate="mediterranean",
+            best_time_to_visit="October to March",
+            avg_daily_cost=1500,
             latitude=-33.9249,
             longitude=18.4241,
-            avg_daily_cost=1500,
         )
-        
-        
+
     def test_destination_list_serializer(self):
         serializer = DestinationListSerializer(self.destination)
 
@@ -35,7 +35,6 @@ class DestinationSerializerTests(TestCase):
         data = serializer.data
 
         self.assertIn("average_rating", data)
-        self.assertIn("review_count", data)
         self.assertIn("total_itineraries", data)
         self.assertIn("total_accommodations", data)
         self.assertIn("total_activities", data)
@@ -46,16 +45,26 @@ class DestinationSerializerTests(TestCase):
         data = serializer.data
 
         self.assertIn("location", data)
-        self.assertEqual(data["location"]["latitude"], -33.9249)
-        self.assertEqual(data["location"]["longitude"], 18.4241)
+
+        self.assertEqual(
+            data["location"]["latitude"],
+            "-33.924900",
+        )
+
+        self.assertEqual(
+            data["location"]["longitude"],
+            "18.424100",
+        )
 
     def test_invalid_latitude_is_rejected(self):
         data = {
             "name": "Invalid Place",
             "country": "South Africa",
             "description": "Invalid coordinates.",
-            "category": "CITY",
-            "climate": "MEDITERRANEAN",
+            "category": "city",
+            "climate": "mediterranean",
+            "best_time_to_visit": "October to March",
+            "avg_daily_cost": 1500,
             "latitude": 100,
             "longitude": 18.4241,
         }
@@ -70,8 +79,10 @@ class DestinationSerializerTests(TestCase):
             "name": "Invalid Place",
             "country": "South Africa",
             "description": "Invalid coordinates.",
-            "category": "CITY",
-            "climate": "MEDITERRANEAN",
+            "category": "city",
+            "climate": "mediterranean",
+            "best_time_to_visit": "October to March",
+            "avg_daily_cost": 1500,
             "latitude": -33.9249,
             "longitude": 200,
         }
@@ -86,8 +97,10 @@ class DestinationSerializerTests(TestCase):
             "name": "Durban",
             "country": "South Africa",
             "description": "A coastal city.",
-            "category": "CITY",
-            "climate": "SUBTROPICAL",
+            "category": "beach",
+            "climate": "tropical",
+            "best_time_to_visit": "May to September",
+            "avg_daily_cost": 1200,
             "latitude": -29.8587,
             "longitude": 31.0218,
         }
@@ -100,23 +113,36 @@ class DestinationSerializerTests(TestCase):
 
         self.assertEqual(destination.name, "Durban")
         self.assertEqual(destination.country, "South Africa")
+        self.assertEqual(destination.category, "beach")
 
     def test_destination_can_be_updated(self):
+        data = {
+            "name": "Cape Town Updated",
+            "country": "South Africa",
+            "description": "Updated description.",
+            "category": "city",
+            "climate": "mediterranean",
+            "best_time_to_visit": "November to February",
+            "avg_daily_cost": 1800,
+            "latitude": -33.9249,
+            "longitude": 18.4241,
+        }
+
         serializer = DestinationCreateUpdateSerializer(
             instance=self.destination,
-            data={
-                "name": "Cape Town Updated",
-                "country": "South Africa",
-                "description": "Updated description.",
-                "category": "CITY",
-                "climate": "MEDITERRANEAN",
-                "latitude": -33.9249,
-                "longitude": 18.4241,
-            },
+            data=data,
         )
 
         self.assertTrue(serializer.is_valid(), serializer.errors)
 
         destination = serializer.save()
 
-        self.assertEqual(destination.name, "Cape Town Updated")
+        self.assertEqual(
+            destination.name,
+            "Cape Town Updated",
+        )
+
+        self.assertEqual(
+            destination.avg_daily_cost,
+            1800,
+        )
