@@ -94,16 +94,27 @@ class BudgetSerializerTests(TestCase):
         )
 
         self.assertEqual(
-            serializer.data["total_budget"],
+            data["total_budget"],
             8500,
         )
 
     def test_budget_serializer_accepts_valid_data(self):
+        new_itinerary = Itinerary.objects.create(
+            title="Durban Trip",
+            description="A trip to Durban.",
+            destination=self.destination,
+            owner=self.user,
+            start_date=date(2026, 11, 1),
+            end_date=date(2026, 11, 7),
+            budget=10000,
+            status="planning",
+        )
+
         data = {
-            "itinerary": self.itinerary.id,
-            "accommodation_budget": "4000.00",
-            "activities_budget": "2500.00",
-            "food_budget": "2000.00",
+            "itinerary": new_itinerary.id,
+            "accommodation_budget": "3000.00",
+            "activities_budget": "2000.00",
+            "food_budget": "1500.00",
             "transport_budget": "1000.00",
             "shopping_budget": "500.00",
             "miscellaneous_budget": "500.00",
@@ -114,6 +125,18 @@ class BudgetSerializerTests(TestCase):
         self.assertTrue(
             serializer.is_valid(),
             serializer.errors,
+        )
+
+        budget = serializer.save()
+
+        self.assertEqual(
+            budget.itinerary,
+            new_itinerary,
+        )
+
+        self.assertEqual(
+            budget.accommodation_budget,
+            3000,
         )
 
     def test_budget_serializer_rejects_negative_budget(self):
@@ -184,35 +207,7 @@ class BudgetSerializerTests(TestCase):
             data["description"],
             "Restaurant dinner",
         )
-        def test_budget_serializer_accepts_valid_data(self):
-            new_itinerary = Itinerary.objects.create(
-                title="Durban Trip",
-                description="A trip to Durban.",
-                destination=self.destination,
-                owner=self.user,
-                start_date=date(2026, 11, 1),
-                end_date=date(2026, 11, 7),
-                budget=10000,
-            )
-            data = {
-                "itinerary": new_itinerary.id,
-                "accommodation_budget": "3000.00",
-                "activities_budget": "2000.00",
-                "food_budget": "1500.00",
-                "transport_budget": "1000.00",
-                "shopping_budget": "500.00",
-                "miscellaneous_budget": "500.00",
-            }
-            serializer = BudgetSerializer(data=data)
-            self.assertTrue(
-                serializer.is_valid(),
-                serializer.errors,
-            )
-            budget = serializer.save()
-            self.assertEqual(budget.itinerary, new_itinerary)
-            self.assertEqual(budget.accommodation_budget, 3000)
 
-    
     def test_expense_serializer_rejects_invalid_amount(self):
         data = {
             "itinerary": self.itinerary.id,
