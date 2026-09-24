@@ -287,13 +287,14 @@ class ItineraryCreateUpdateSerializer(
         model = Itinerary
 
         fields = [
-            "title",
-            "description",
-            "destination_id",
-            "start_date",
-            "end_date",
-            "budget",
-            "is_public",
+          "title",
+          "description",
+          "destination_id",
+          "start_date",
+          "end_date",
+          "budget",
+          "status",
+          "is_public",
         ]
 
     def validate(self, data):
