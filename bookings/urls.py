@@ -1,12 +1,12 @@
-from django.contrib import admin
-from django.urls import include, path
+from django.urls import path
+
+from .views import BookingListCreateView
 
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-
-    path("api/accounts/", include("accounts.urls")),
-    path("api/", include("destinations.urls")),
-    path("api/", include("itineraries.urls")),
-    path("api/", include("bookings.urls")),
+    path(
+        "bookings/",
+        BookingListCreateView.as_view(),
+        name="booking-list-create",
+    ),
 ]
